@@ -1,65 +1,48 @@
-/* Smooth scroll */
-document.querySelectorAll('.nav-link').forEach(link => {
-  link.addEventListener('click', function (e) {
-    if (this.hash) {
-      e.preventDefault();
-      document.querySelector(this.hash).scrollIntoView({ behavior: 'smooth' });
-    }
+// Mobile menu
+const menuBtn = document.querySelector('.menu-btn');
+const navLinks = document.getElementById('nav-links');
+if (menuBtn && navLinks) {
+  menuBtn.addEventListener('click', () => {
+    const open = navLinks.classList.toggle('open');
+    menuBtn.setAttribute('aria-expanded', String(open));
   });
-});
-
-/* Typing Effect */
-const phrases = ["Angular", "Good UI Skills", "Problem Solving"];
-let currentPhraseIndex = 0;
-const typedElement = document.getElementById("typing");
-
-function typePhrase() {
-  typedElement.textContent = phrases[currentPhraseIndex];
-  currentPhraseIndex = (currentPhraseIndex + 1) % phrases.length;
+  // Close the menu after picking a link
+  navLinks.querySelectorAll('a').forEach(link =>
+    link.addEventListener('click', () => {
+      navLinks.classList.remove('open');
+      menuBtn.setAttribute('aria-expanded', 'false');
+    })
+  );
 }
 
-// Only runs if the page has an element with id="typing".
-if (typedElement) setInterval(typePhrase, 8000);
-const sections = document.querySelectorAll("section");
+// Reveal tiles as they scroll into view
+const revealItems = document.querySelectorAll('.reveal');
+if ('IntersectionObserver' in window) {
+  const observer = new IntersectionObserver(
+    entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.12 }
+  );
+  revealItems.forEach(item => observer.observe(item));
+} else {
+  revealItems.forEach(item => item.classList.add('in'));
+}
 
-const observer = new IntersectionObserver(
-  (entries, observer) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add("reveal");
-        observer.unobserve(entry.target); // animate only once
-      }
-    });
-  },
-  { threshold: 0.2 } // 20% visible triggers animation
-);
+// Back to top
+const toTop = document.getElementById('backToTopBtn');
+if (toTop) {
+  window.addEventListener('scroll', () => {
+    toTop.classList.toggle('show', window.scrollY > 500);
+  });
+  toTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+}
 
-sections.forEach(section => observer.observe(section));
-const items = document.querySelectorAll(".work-item");
-
-const observer2 = new IntersectionObserver(
-  (entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add("show");
-      }
-    });
-  },
-  { threshold: 0.3 }
-);
-
-items.forEach((item) => observer2.observe(item));
-// scroll top
-const backToTopBtn = document.getElementById("backToTopBtn");
-
-window.addEventListener("scroll", () => {
-  if (window.scrollY > 300) {
-    backToTopBtn.classList.remove("d-none");
-  } else {
-    backToTopBtn.classList.add("d-none");
-  }
-});
-
-backToTopBtn.addEventListener("click", () => {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-});
+// Footer year
+const year = document.getElementById('year');
+if (year) year.textContent = String(new Date().getFullYear());

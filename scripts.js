@@ -18,7 +18,8 @@ function typePhrase() {
   currentPhraseIndex = (currentPhraseIndex + 1) % phrases.length;
 }
 
-setInterval(typePhrase, 8000);
+// Only runs if the page has an element with id="typing".
+if (typedElement) setInterval(typePhrase, 8000);
 const sections = document.querySelectorAll("section");
 
 const observer = new IntersectionObserver(

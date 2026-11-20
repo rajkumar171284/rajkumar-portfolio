@@ -831,6 +831,9 @@ h2::after {
 
 .achievement-icon {
   fill: #007bff;
+  color: #007bff;
+  font-size: 2.75rem;
+  line-height: 1;
 }
 
 .achievement-item {
